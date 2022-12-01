@@ -51,7 +51,7 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
             $program->setSynopsis($tvshow['Synopsis']);
             $program->setCategory($this->getReference($tvshow['Category']));
             $manager->persist($program);
-
+            // $setcover
             $manager->flush();
         }
     }
@@ -59,6 +59,8 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             CategoryFixtures::class,
+            //FQCN nom de la classe avec son namespace. C'est ce dont à besoin symfony pour connaître les fixtures 
+            //regarder lazyloading
         ];
     }
 }

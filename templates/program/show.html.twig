@@ -12,6 +12,22 @@
 			<p>Catégorie :
 				{{ program.category.name }}</p>
 		</div>
+		{% for season in program.seasons %}
+			<div>
+				<p>Numéro de saison :
+					{{ season.number }}</p>
+				<p>
+					Nombre d'épisodes :
+					{{ season.episodes|length }}</p>
+				<p>Année :
+					{{ season.year }}</p>
+				<p>
+					<a href="{{ path("program_season_show", { programId: program.id, seasonId: season.id }) }}">Voir la fiche</a>
+				</p>
+			</div>
+		{% else %}
+			Aucune série trouvée.
+		{% endfor %}
 	</div>
 
 	<a href="{{ path('program_index') }}">

@@ -12,9 +12,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class CategoryController extends AbstractController
 {
     #[Route('/', name: 'index')]
-    public function index(CategoryRepository $catergoryRepository): Response
+    public function index(CategoryRepository $categoryRepository): Response
     {
-        $categories = $catergoryRepository->findAll();
+        $categories = $categoryRepository->findAll();
 
         return $this->render(
             'category/index.html.twig',
@@ -23,10 +23,9 @@ class CategoryController extends AbstractController
     }
 
     #[Route('{categoryName}', name: 'show')]
-    public function show(string $categoryName, CategoryRepository $catergoryRepository, ProgramRepository $programRepository): Response
+    public function show(string $categoryName, CategoryRepository $categoryRepository, ProgramRepository $programRepository): Response
     {
-        $category = $catergoryRepository->findOneBy(['name' => $categoryName]);
-        // same as $program = $programRepository->find($id);
+        $category = $categoryRepository->findOneBy(['name' => $categoryName]);
 
         if (!$category) {
             throw $this->createNotFoundException(
