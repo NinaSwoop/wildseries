@@ -7,9 +7,9 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
+
 class ProgramFixtures extends Fixture implements DependentFixtureInterface
 {
-
     const PROGRAMS = [
         ['Title' => 'Walking dead', 'Synopsis' => "Des zombies envahissent la terre", 'Category' => 'category_Action',],
         ['Title' => 'Malcom', 'Synopsis' => "Petit génie malgré lui, Malcolm vit dans une famille hors du commun. Le jeune surdoué n'hésite pas à se servir de son intelligence pour faire les 400 coups avec ses frères.", 'Category' => 'category_Comédie',],
@@ -40,27 +40,32 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
         ['Title' => 'Braquo', 'Synopsis' => "Suite à la condamnation injuste et au suicide de leur chef de groupe, trois policiers de la police judiciaire ont la tentation de franchir la ligne rouge. Faisant ainsi front à la machine administrative qui a conduit leur ami jusqu'à la mort.", 'Category' => "category_Action",],
     ];
 
-
-
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
+        //Puis ici nous demandons à la Factory de nous fournir un Faker
+
+        /**
+         * L'objet $faker que tu récupère est l'outil qui va te permettre 
+         * de te générer toutes les données que tu souhaites
+         */
 
         foreach (self::PROGRAMS as $key => $tvshow) {
+
             $program = new Program();
             $program->setTitle($tvshow['Title']);
             $program->setSynopsis($tvshow['Synopsis']);
             $program->setCategory($this->getReference($tvshow['Category']));
+            $this->addReference('program_' . $key, $program);
             $manager->persist($program);
-            // $setcover
-            $manager->flush();
         }
+
+        $manager->flush();
     }
-    public function getDependencies()
+
+    public function getDependencies(): array
     {
         return [
             CategoryFixtures::class,
-            //FQCN nom de la classe avec son namespace. C'est ce dont à besoin symfony pour connaître les fixtures 
-            //regarder lazyloading
         ];
     }
 }
