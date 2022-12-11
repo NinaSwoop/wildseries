@@ -2,11 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\Episode;
+use App\Entity\Program;
+use App\Entity\Season;
 use App\Repository\ProgramRepository;
 use App\Repository\SeasonRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
@@ -52,6 +56,19 @@ class ProgramController extends AbstractController
         return $this->render('program/season_show.html.twig', [
             'program' => $program,
             'season' => $season,
+        ]);
+    }
+    #[Route('/{programId}/seasons/{seasonId}/episode/{episodeId}', methods: ['GET'], name: 'episode_show')]
+    #[Entity('program', options: ['mapping' => ['programId' => 'id']])]
+    #[Entity('season', options: ['mapping' => ['seasonId' => 'id']])]
+    #[Entity('episode', options: ['mapping' => ['episodeId' => 'id']])]
+    public function showEpisode(Program $program, Season $season, Episode $episode): Response
+    {
+
+        return $this->render('program/episode_show.html.twig', [
+            'program' => $program,
+            'season' => $season,
+            'episode' => $episode,
         ]);
     }
 }

@@ -29,6 +29,7 @@
 				<p>N° de l'épisode :
 					{{ episode.number }}</p>
 			</div>
+			<a href="{{ path("program_episode_show", { programId: program.id, seasonId: season.id , episodeId: episode.id }) }}">Voir la fiche</a>
 		{% endfor %}
 
 	</div>
