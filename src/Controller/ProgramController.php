@@ -11,6 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use App\Form\ProgramTypePhpType;
+use Symfony\Component\HttpFoundation\Request;
 
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
@@ -24,6 +26,36 @@ class ProgramController extends AbstractController
             'program/index.html.twig',
             ['programs' => $programs]
         );
+    }
+
+    #[Route('/new', name: 'new')]
+    public function new(Request $request, ProgramRepository $programRepository): Response
+    {
+        $program = new Program();
+
+        // Create the form, linked with $category
+        $form = $this->createForm(ProgramTypePhpType::class, $program);
+
+        $form->handleRequest($request);
+        // Was the form submitted ?
+        if ($form->isSubmitted()) {
+            $programRepository->save($program, true);
+
+            // Redirect to categories list
+            return $this->redirectToRoute('program_index');
+            // Deal with the submitted data
+            // For example : persiste & flush the entity
+            // And redirect to a route that display the result
+        }
+        // Render the form (best practice)
+        return $this->renderForm('program/new.html.twig', [
+            'form' => $form,
+        ]);
+
+        // Alternative
+        // return $this->render('category/new.html.twig', [
+        //   'form' => $form->createView(),
+        // ]);
     }
 
     #[Route('/show/{id<^[0-9]+$>}', methods: ['GET'], name: 'show')]
