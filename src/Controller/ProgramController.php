@@ -14,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use App\Form\ProgramTypePhpType;
 use Symfony\Component\HttpFoundation\Request;
 
+
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
 {
@@ -28,7 +29,7 @@ class ProgramController extends AbstractController
         );
     }
 
-    #[Route('/new', name: 'new')]
+    #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(Request $request, ProgramRepository $programRepository): Response
     {
         $program = new Program();
@@ -41,6 +42,7 @@ class ProgramController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $programRepository->save($program, true);
 
+            $this->addFlash('success', 'The new program has been created');
             // Redirect to categories list
             return $this->redirectToRoute('program_index');
             // Deal with the submitted data
@@ -50,6 +52,7 @@ class ProgramController extends AbstractController
         // Render the form (best practice)
         return $this->renderForm('program/new.html.twig', [
             'form' => $form,
+            'program' => $program,
         ]);
 
         // Alternative
@@ -58,15 +61,15 @@ class ProgramController extends AbstractController
         // ]);
     }
 
-    #[Route('/show/{id<^[0-9]+$>}', methods: ['GET'], name: 'show')]
-    public function show(int $id, ProgramRepository $programRepository): Response
+    #[Route('/show/{programId}', methods: ['GET', 'POST'], name: 'program_show')]
+    public function show(ProgramRepository $programRepository, $programId): Response
     {
-        $program = $programRepository->findOneBy(['id' => $id]);
+        $program = $programRepository->findOneBy(['id' => $programId]);
         // same as $program = $programRepository->find($id);
 
         if (!$program) {
             throw $this->createNotFoundException(
-                'No program with id : ' . $id . ' found in program\'s table.'
+                'No program with id : ' . $programId . ' found in program\'s table.'
             );
         }
         return $this->render('program/show.html.twig', [
@@ -102,5 +105,37 @@ class ProgramController extends AbstractController
             'season' => $season,
             'episode' => $episode,
         ]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_program_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Program $program, ProgramRepository $programRepository): Response
+    {
+        $form = $this->createForm(ProgramTypePhpType::class, $program);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $programRepository->save($program, true);
+
+            $this->addFlash('success', 'The program has been changed');
+
+            return $this->redirectToRoute('program_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('program/edit.html.twig', [
+            'program' => $program,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'app_program_delete', methods: ['POST'])]
+    public function delete(Request $request, Program $program, ProgramRepository $programRepository): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $program->getId(), $request->request->get('_token'))) {
+            $programRepository->remove($program, true);
+        }
+
+        $this->addFlash('danger', 'The program has been delete');
+
+        return $this->redirectToRoute('app_season_index', [], Response::HTTP_SEE_OTHER);
     }
 }
