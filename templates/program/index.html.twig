@@ -4,32 +4,56 @@
 {% endblock %}
 
 {% block body %}
-<a href="{{ path('app_index') }}">
-    Retour à l'accueil
-</a>
-<div class="container">
-    <div class="col">
-        <div class="row">
-            {% for program in programs %}
-            <div class="card m-3 shadow-lg" style="width: 18rem;">
-                <img src="{{ program.poster }}" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">{{ program.title }}</h5>
-                    <p class="card-text">{{ program.synopsis }}</p>
-                    <a href="{{ path('program_program_show', {'programId': program.id}) }}"
-                       class="btn btn-primary">show</a>
-                    <a href="{{ path('program_app_program_edit', {'id': program.id}) }}"
-                       class="btn btn-primary">edit</a>
-                </div>
+
+    <div class="album py-5">
+        <div class="container">
+            <div class="d-grid gap-2 d-md-flex mb-3 justify-content-md-end my-5">
+                <a href="{{ path('app_index') }}" class="btn btn-primary btn-sm" type="button">Retour à
+                    l'accueil</a>
             </div>
-            {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
+            <h1 class="mb-5">Toutes les séries</h1>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {% for program in programs %}
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <img class="bd-placeholder-img card-img-top"
+                                 src="https://fakeimg.pl/350x200/52B69A/FEECCD/?text=Série"
+                                 alt="poster program"
+                                 width="100%" height="225"
+                                 xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                                 preserveAspectRatio="xMidYMid slice" focusable="false">
+                            <rect width="100%" height="100%" fill="#55595c"></rect>
+
+                            <div class="card-body">
+                                <p class="card-text fw-bold">{{ program.title }}</p>
+                                <p class="card-text">{{ program.synopsis }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <a href="{{ path('program_show', {'programId': program.id}) }}"
+                                           type="button"
+                                           class="btn btn-sm btn-outline-primary">
+                                            Voir
+                                        </a>
+                                        <a href="{{ path('program_edit', {'id': program.id}) }}"
+                                           type="button" class="btn btn-sm btn-outline-primary">
+                                            Modifier
+                                        </a>
+                                    </div>
+                                    <small class="text-muted">9 mins</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <tr>
+                        <td colspan="5">Aucun résultat trouvé</td>
+                    </tr>
+                {% endfor %}
+            </div>
         </div>
     </div>
-</div>
-        {% endblock %}
+{% endblock %}
+
+
 
 

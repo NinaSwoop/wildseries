@@ -4,7 +4,55 @@
 {% endblock %}
 
 {% block body %}
-	<h1 class='text-center display-1'>
-		Bienvenue sur Wild Séries!!
-	</h1>
+    <main class="container py-4">
+        <h1 class='text-center display-1 mt-5'>
+            Bienvenue sur Wild Séries!!
+        </h1>
+
+        <div class="col-sm-6 col-lg-4 mb-4">
+            <div class="card p-3">
+                <figure class="p-3 mb-0">
+                    <blockquote class="blockquote">
+                        <p>{{ quotes.citation }}</p>
+                    </blockquote>
+                    <figcaption class="blockquote-footer mb-0 text-muted">
+                        Someone famous in <cite title="Source Title">Source Title</cite>
+                    </figcaption>
+                </figure>
+            </div>
+        </div>
+        <div class="p-5 mb-4 bg-light rounded-3">
+            <div class="container-fluid py-5">
+                <h1 class="display-5 fw-bold">Toutes les séries</h1>
+                <p class="col-md-8 fs-4">Wild Séries vous propose une liste de séries. Restez connecté et profitez
+                    de toute l'actualité du site</p>
+                <a href="{{ path('program_index') }}" class="btn btn-primary btn-lg" type="button">Go Séries</a>
+            </div>
+        </div>
+
+
+        <div class="row align-items-md-stretch">
+            <div class="col-md-6">
+                <div class="h-100 p-5 text-bg-dark rounded-3">
+                    <h2>Toutes les catégories</h2>
+                    <p>Retrouver toutes les séries classées par catégories.</p>
+                    <a href="{{ path('category_index') }}" class="btn btn-outline-light" type="button">Voir les
+                        catégories</a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="h-100 p-5 bg-light border rounded-3">
+                    <h2>Tous les acteurs</h2>
+                    <p>Choisissez votre série en fonction des acteurs</p>
+                    <a href="{{ path('app_actor') }}" class="btn btn-outline-dark" type="button">Voir les
+                        acteurs</a>
+                </div>
+            </div>
+        </div>
+    </main>
 {% endblock %}
+
+
+
+
+

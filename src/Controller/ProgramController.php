@@ -9,10 +9,13 @@ use App\Repository\ProgramRepository;
 use App\Repository\SeasonRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use App\Form\ProgramTypePhpType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 
 #[Route('/program', name: 'program_')]
@@ -30,10 +33,10 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, ProgramRepository $programRepository): Response
+    public function new(Request $request, ProgramRepository $programRepository, MailerInterface $mailer, SluggerInterface $slugger): Response
     {
-        $program = new Program();
 
+        $program = new Program();
         // Create the form, linked with $category
         $form = $this->createForm(ProgramTypePhpType::class, $program);
 
@@ -42,7 +45,18 @@ class ProgramController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $programRepository->save($program, true);
 
-            $this->addFlash('success', 'The new program has been created');
+            $slug = $slugger->slug($program->getTitle());
+            $program->setSlug($slug);
+
+            $email = (new Email())
+                ->from($this->getParameter('mailer_from'))
+                ->to('nina.iacoponelli@gmail.com')
+                ->subject('Une nouvelle série vient d\'être publiée !')
+                ->html($this->renderView('Program/newProgramEmail.html.twig', ['program' => $program]));
+
+            $mailer->send($email);
+
+            $this->addFlash('success', 'La série a bien été créée');
             // Redirect to categories list
             return $this->redirectToRoute('program_index');
             // Deal with the submitted data
@@ -61,7 +75,7 @@ class ProgramController extends AbstractController
         // ]);
     }
 
-    #[Route('/show/{programId}', methods: ['GET', 'POST'], name: 'program_show')]
+    #[Route('/show/{programId}', name: 'show', methods: ['GET', 'POST'])]
     public function show(ProgramRepository $programRepository, $programId): Response
     {
         $program = $programRepository->findOneBy(['id' => $programId]);
@@ -73,15 +87,18 @@ class ProgramController extends AbstractController
             );
         }
         return $this->render('program/show.html.twig', [
-            'program' => $program,
+            'program' => $program
         ]);
     }
 
-    #[Route('/{programId}/seasons/{seasonId}', methods: ['GET'], name: 'season_show')]
-    public function showSeason(int $programId, int $seasonId, SeasonRepository $seasonRepository, ProgramRepository $programRepository): Response
+    #[Route('/{programId}/seasons/{seasonId}', name: 'season_show', methods: ['GET'])]
+    public function showSeason(int $programId, int $seasonId, SeasonRepository $seasonRepository, ProgramRepository $programRepository, SluggerInterface $slugger): Response
     {
         $season = $seasonRepository->findOneBy(['id' => $seasonId]);
         $program = $programRepository->findOneBy(['id' => $programId]);
+
+        $slug = $slugger->slug($program->getTitle());
+        $program->setSlug($slug);
 
         if (!$season) {
             throw $this->createNotFoundException(
@@ -93,7 +110,8 @@ class ProgramController extends AbstractController
             'season' => $season,
         ]);
     }
-    #[Route('/{programId}/seasons/{seasonId}/episode/{episodeId}', methods: ['GET'], name: 'episode_show')]
+
+    #[Route('/{programId}/seasons/{seasonId}/episode/{episodeId}', name: 'episode_show', methods: ['GET'])]
     #[Entity('program', options: ['mapping' => ['programId' => 'id']])]
     #[Entity('season', options: ['mapping' => ['seasonId' => 'id']])]
     #[Entity('episode', options: ['mapping' => ['episodeId' => 'id']])]
@@ -107,7 +125,7 @@ class ProgramController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_program_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Program $program, ProgramRepository $programRepository): Response
     {
         $form = $this->createForm(ProgramTypePhpType::class, $program);
@@ -116,7 +134,7 @@ class ProgramController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $programRepository->save($program, true);
 
-            $this->addFlash('success', 'The program has been changed');
+            $this->addFlash('success', 'La série a bien été modifiée');
 
             return $this->redirectToRoute('program_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -127,7 +145,7 @@ class ProgramController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_program_delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Program $program, ProgramRepository $programRepository): Response
     {
         if ($this->isCsrfTokenValid('delete' . $program->getId(), $request->request->get('_token'))) {

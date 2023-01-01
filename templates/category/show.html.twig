@@ -4,29 +4,37 @@
 {% endblock %}
 
 {% block body %}
-	<div class="media">
-		<div class="media-body">
-			<h1>Trois séries de la table :
-				{{ category.name }}</h1>
-			{% for program in programs %}
-				<div>
-					<h3>{{ loop.index }}
-						/
-						{{ program.title }}</h3>
-					<p>{{ program.synopsis }}</p>
-					<p>ID de la série :
-						{{program.id}}</p>
-					<a href="{{ path("program_show", { 'programId': program.id }) }}">Voir la fiche</a>
-				</div>
-			{% else %}
-				Aucune série trouvée.
-			{% endfor %}
-		</div>
-	</div>
 
+    <main class="container py-5">
+        <div class="d-grid gap-2 d-md-flex mb-3 justify-content-md-end my-5">
+            <a href="{{ path('app_index') }}" class="btn btn-primary btn-sm" type="button">Retour à l'accueil</a>
+        </div>
 
-	<a href="{{ path('category_index') }}">
-		Retour à la liste des programmes
-	</a>
-
+        <h1>Trois séries de la table
+            {{ category.name }}</h1>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mt-5">
+            {% for program in programs %}
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h3>{{ program.title }}</h3>
+                            <p>{{ program.synopsis }}</p>
+                            <p>ID de la série :
+                                {{ program.id }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <a href="{{ path("program_show", { 'programId': program.id }) }}"
+                                       class="btn btn-primary btn-sm">Voir toutes les séries de cette catégorie</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <tr>
+                    <td colspan="5">Aucun résultat trouvé</td>
+                </tr>
+            {% endfor %}
+        </div>
+    </main>
 {% endblock %}

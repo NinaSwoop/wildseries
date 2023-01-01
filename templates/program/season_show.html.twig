@@ -4,36 +4,53 @@
 {% endblock %}
 
 {% block body %}
-	<div
-		class="media">
-		{# <img class="align-self-start mr-3" src="{{programId.poster}}" alt="{{ programId.title }} poster"> #}
-		<div class="media-body">
-			<h1 class="mt-0">{{ program.title }}</h1>
-			<p>{{ program.synopsis }}</p>
-			<p>Catégorie :
-				{{ program.category.name }}</p>
-		</div>
-		<div>
-			<p>Numéro de saison :{{ season.number }}</p>
-			<p>
-				Nombre d'épisodes :
-				{{ season.episodes|length }}</p>
-		</div>
-		{% for episode in season.episodes %}
 
-			<div>
-				<p>Titre de l'épisode :
-					{{ episode.title }}</p>
-				<p>Synopsis :
-					{{ episode.synopsis }}</p>
-				<p>N° de l'épisode :
-					{{ episode.number }}</p>
-			</div>
-			<a href="{{ path("program_episode_show", { programId: program.id, seasonId: season.id , episodeId: episode.id }) }}">Voir la fiche</a>
-		{% endfor %}
+    <div class="album py-5">
+        <div class="container">
+            <div class="d-grid gap-2 d-md-flex mb-3 justify-content-md-end my-5">
+                <a href="{{ path("program_show", { programId: program.id }) }}"
+                   class="btn btn-primary btn-sm" type="button">Retour à
+                    la liste des saisons</a>
+            </div>
 
-	</div>
+            <img class="position-relative top-0 start-50 translate-middle-x my-5"
+                 src="https://fakeimg.pl/350x200/52B69A/FEECCD/?text=Série"
+                 alt="poster program">
 
-<a href="{{ path('program_index') }}">
-	Retour à la liste des programmes
-</a>{% endblock %}
+            <h1 class="mt-0">Série : {{ program.title }}</h1>
+            <p>{{ program.synopsis }}</p>
+            <p>Catégorie :
+                {{ program.category.name }}</p>
+            <h2>Détail de la saison {{ season.number }}</h2>
+            <p>
+                Nombre d'épisodes :
+                {{ season.episodes|length }}</p>
+
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {% for episode in season.episodes %}
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <p class="card-text fw-bold">Titre de l'épisode : {{ episode.title }}</p>
+                                <p class="card-text">N° de l'épisode : {{ episode.number }}</p>
+                                <p class="card-text">Synopsis : {{ episode.synopsis }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <a href="{{ path("program_episode_show", { programId: program.id, seasonId: season.id , episodeId: episode.id }) }}"
+                                           class="btn btn-primary btn-sm" type="button">Voir le détail</a>
+                                    </div>
+                                    <small class="text-muted">9 mins</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <tr>
+                        <td colspan="5">Aucun résultat trouvé</td>
+                    </tr>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -17,7 +17,7 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface
         $faker = Factory::create();
 
         /**
-         * L'objet $faker que tu récupère est l'outil qui va te permettre 
+         * L'objet $faker que tu récupère est l'outil qui va te permettre
          * de te générer toutes les données que tu souhaites
          */
 
@@ -28,12 +28,14 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface
                 // boucle episode
                 for ($k = 1; $k < 11; $k++) {
 
+                    
                     $episode = new Episode();
                     //Ce Faker va nous permettre d'alimenter l'instance de Season que l'on souhaite ajouter en base
                     $episode->setNumber($k);
                     $episode->setTitle($faker->words(3, true));
                     $episode->setSynopsis($faker->paragraphs(3, true));
-                    $episode->setSeason($this->getReference('program_' . $i  . '_season_' . $j));
+                    $episode->setDuration($faker->numberBetween(60, 320));
+                    $episode->setSeason($this->getReference('program_' . $i . '_season_' . $j));
                     $manager->persist($episode);
                 }
             }
@@ -44,6 +46,7 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface
 
         $manager->flush();
     }
+
     public function getDependencies(): array
     {
         return [

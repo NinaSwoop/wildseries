@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="EN">
 <head>
     <meta charset="UTF-8">
     <title>
-        {% block title %}Welcome!
+        {% block title %}Bienvenue !
         {% endblock %}
     </title>
     <link rel="icon" href="{{ asset("build/images/logo_io/favicon-32x32.png") }}"/>
@@ -12,6 +12,9 @@
     <link
             href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
             rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js"
+            integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous"
+            async></script>
     {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
@@ -27,6 +30,7 @@
 <header>
     {% include "program/_navbar.html.twig" %}
 </header>
+
 {% for category, messages in app.flashes %}
     {% for message in messages %}
         <div class="alert alert-{{ category }}">
@@ -34,8 +38,12 @@
         </div>
     {% endfor %}
 {% endfor %}
+
 {% block body %}{% endblock %}
 
-</body>
+<footer class="pt-3 mt-4 text-muted border-top">
+    Wild Séries &copy; 2022
+</footer>
 
+</body>
 </html>

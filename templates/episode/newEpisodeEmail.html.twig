@@ -1,0 +1,12 @@
+{% extends 'layoutEMail.html.twig' %}
+
+    {% block title %} Nouvel épisode
+    {% endblock %}
+
+{% block body %}
+    <h1>Nouvel épisode : {{ episode.title }} à été ajouté à la série : </h1>
+    <p>Bonjour, un nouvel épisode : {{ episode.title }} (épisode n° {{ episode.number }} ) vient d'être créé sur Wild
+        Séries</p>
+    <p>Synopsis : {{ episode.synopsis }}</p>
+    <a href="{{ path('app_episode_show', {'id': episode.id}) }}">Lien vers la fiche de l'épisode</a>
+{% endblock %}

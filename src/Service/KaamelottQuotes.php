@@ -1,19 +1,23 @@
 <?php
-// src/Controller/DefaultController.php
-namespace App\Controller;
 
-use App\Service\KaamelottQuotes;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+namespace App\Service;
+
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class DefaultController extends AbstractController
+class KaamelottQuotes
 {
+    private HttpClientInterface $client;
+
+    public function __construct(HttpClientInterface $client)
+    {
+        $this->client = $client;
+    }
+
     /**
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
@@ -21,14 +25,18 @@ class DefaultController extends AbstractController
      * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
      */
-    #[Route('/', name: 'app_index')]
-    public function index(KaamelottQuotes $kaamelottQuotes): Response
+
+    public function getKaamelottQuotes(): array
     {
-        return $this->render('index.html.twig', [
-            'quotes' => $kaamelottQuotes->getKaamelottQuotes(),
-        ]);
+        $response = $this->client->request(
+            'GET',
+            'https://kaamelott.chaudie.re/api/random'
+        );
 
-
+        $content = $response->toArray();
+        return $content['citation'];
     }
-
 }
+
+
+
