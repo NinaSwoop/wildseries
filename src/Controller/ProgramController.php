@@ -7,6 +7,7 @@ use App\Entity\Program;
 use App\Entity\Season;
 use App\Repository\ProgramRepository;
 use App\Repository\SeasonRepository;
+use App\Service\ProgramDuration\ProgramDuration;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
@@ -43,10 +44,12 @@ class ProgramController extends AbstractController
         $form->handleRequest($request);
         // Was the form submitted ?
         if ($form->isSubmitted() && $form->isValid()) {
-            $programRepository->save($program, true);
+
 
             $slug = $slugger->slug($program->getTitle());
             $program->setSlug($slug);
+
+            $programRepository->save($program, true);
 
             $email = (new Email())
                 ->from($this->getParameter('mailer_from'))
@@ -75,36 +78,23 @@ class ProgramController extends AbstractController
         // ]);
     }
 
-    #[Route('/show/{programId}', name: 'show', methods: ['GET', 'POST'])]
-    public function show(ProgramRepository $programRepository, $programId): Response
+    #[Route('/show/{slug}', name: 'show', methods: ['GET', 'POST'])]
+    public function show(ProgramRepository $programRepository, Program $program, ProgramDuration $programDuration): Response
     {
-        $program = $programRepository->findOneBy(['id' => $programId]);
-        // same as $program = $programRepository->find($id);
+        $programDuration->calculate($program);
 
-        if (!$program) {
-            throw $this->createNotFoundException(
-                'No program with id : ' . $programId . ' found in program\'s table.'
-            );
-        }
         return $this->render('program/show.html.twig', [
-            'program' => $program
+            'program' => $program,
+            'programDuration' => $programDuration->calculate($program),
         ]);
     }
 
     #[Route('/{programId}/seasons/{seasonId}', name: 'season_show', methods: ['GET'])]
-    public function showSeason(int $programId, int $seasonId, SeasonRepository $seasonRepository, ProgramRepository $programRepository, SluggerInterface $slugger): Response
+    #[Entity('season', options: ['mapping' => ['seasonId' => 'id']])]
+    #[Entity('program', options: ['mapping' => ['programId' => 'id']])]
+    public function showSeason(Program $program, Season $season, ProgramRepository $programRepository, SeasonRepository $seasonRepository): Response
     {
-        $season = $seasonRepository->findOneBy(['id' => $seasonId]);
-        $program = $programRepository->findOneBy(['id' => $programId]);
 
-        $slug = $slugger->slug($program->getTitle());
-        $program->setSlug($slug);
-
-        if (!$season) {
-            throw $this->createNotFoundException(
-                'No program with id : ' . $seasonId . ' found in program\'s table.'
-            );
-        }
         return $this->render('program/season_show.html.twig', [
             'program' => $program,
             'season' => $season,
@@ -125,11 +115,14 @@ class ProgramController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Program $program, ProgramRepository $programRepository): Response
+    #[Route('/{slug}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Program $program, ProgramRepository $programRepository, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(ProgramTypePhpType::class, $program);
         $form->handleRequest($request);
+
+        $slug = $slugger->slug($program->getTitle());
+        $program->setSlug($slug);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $programRepository->save($program, true);

@@ -1,8 +1,15 @@
 {% extends "base.html.twig" %}
 
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
 {% block body %}
-	{{ form_start(form) }}
-	{{ form_widget(form) }}
-	<button type="submit">Add category</button>
-	{{ form_end(form) }}
+    <main class="container">
+        <div class="d-grid gap-2 d-md-flex mb-3 justify-content-md-end mt-5">
+            <a href="{{ path('program_index') }}" class="btn btn-primary btn-sm mt-5" type="button">Retour à la
+                liste</a>
+        </div>
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn">{{ button_label|default('Enregistrer') }}</button>
+        {{ form_end(form) }}
+    </main>
 {% endblock %}

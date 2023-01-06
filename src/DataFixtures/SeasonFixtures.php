@@ -9,16 +9,18 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 //Tout d'abord nous ajoutons la classe Factory de FakerPhp
 use Faker\Factory;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class SeasonFixtures extends Fixture implements DependentFixtureInterface
 {
+
     public function load(ObjectManager $manager): void
     {
         //Puis ici nous demandons à la Factory de nous fournir un Faker
         $faker = Factory::create();
 
         /**
-         * L'objet $faker que tu récupère est l'outil qui va te permettre 
+         * L'objet $faker que tu récupère est l'outil qui va te permettre
          * de te générer toutes les données que tu souhaites
          */
 
