@@ -4,7 +4,9 @@
     {% endblock %}
 
 {% block body %}
-    <h1>Nouvelle série : {{ program.title }} à été ajoutée </h1>
+    <h1 class="layoutEmailTitle">Wild Séries</h1>
+    <img class="logoLayoutEmail align-content-center" src="{{ asset('build/images/logo.png') }}" alt="ACME logo">
+    <p>Nouvelle série : {{ program.title }} à été ajoutée </p>
     <p>Bonjour, une nouvelle série : {{ program.title }} vient d'être créée sur Wild Séries</p>
     <p>Synopsis : {{ program.synopsis }}</p>
 {% endblock %}

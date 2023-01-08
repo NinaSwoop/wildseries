@@ -11,10 +11,8 @@
                 <a href="{{ path('program_index') }}" class="btn btn-primary btn-sm" type="button">Retour à la
                     liste des séries</a>
             </div>
-
             <img class="position-relative top-0 start-50 translate-middle-x my-5"
-                 src="https://fakeimg.pl/350x200/52B69A/FEECCD/?text=Série"
-                 alt="poster program">
+                 src="{{ vich_uploader_asset(program) }}" alt="{{ program.title }}">
             <h1 class="mt-0">Série : {{ program.title }}</h1>
             <p>Synopsis : {{ program.synopsis }}</p>
             <p>Catégorie :
