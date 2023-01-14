@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+    iv class="album py-5">
+    <div class="container">
+        <div class="d-grid gap-2 d-md-flex mb-3 justify-content-md-end my-5">
+            <a href="{{ path('app_index') }}" class="btn btn-primary btn-sm" type="button">Retour à
+                l'accueil</a>
+        </div>
+        <h1>S'inscrire</h1>
+
+        {{ form_start(registrationForm) }}
+        {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.plainPassword, {
+            label: 'Mot de passe'
+        }) }}
+        {{ form_row(registrationForm.agreeTerms) }}
+
+        <button type="submit" class="btn">S'inscrire</button>
+        {{ form_end(registrationForm) }}
+    </div>
+{% endblock %}
+
