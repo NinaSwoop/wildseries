@@ -9,9 +9,9 @@
                 <a href="{{ path('app_index') }}" class="btn btn-primary btn-sm" type="button">Retour à
                     l'accueil</a>
             </div>
+            <h1>Login</h1>
             {% if error %}
-                <p>coucou</p>
-                {#                <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div> #}
+                <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
             {% endif %}
 
             <form action="{{ path('app_login') }}" method="post">
