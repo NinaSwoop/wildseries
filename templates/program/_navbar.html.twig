@@ -28,7 +28,12 @@
                     <a href="#" class="nav-link px-2 link-dark">Mes favoris</a>
                 </li>
                 <li class="d-flex align-items-center m-2">
-                    <a href="#" class="nav-link px-2 link-dark">Déconnexion</a>
+                    {% if app.user %}
+                        {{ app.user.email }}
+                        <a href="{{ path('app_logout') }}" class="nav-link px-2 link-dark"> Se déconnecter</a>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="nav-link px-2 link-dark"> Se connecter</a>
+                    {% endif %}
                 </li>
             </ul>
 
