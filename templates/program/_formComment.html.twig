@@ -1,0 +1,7 @@
+{% form_theme formComment 'bootstrap_5_layout.html.twig' %}
+{{ form_start(formComment) }}
+{{ form_widget(formComment) }}
+<div class="d-grid gap-2 d-md-flex mb-3 justify-content-md-end">
+    <button class="btn btn-sm bg-warning">{{ button_label|default('Ajouter un commentaire') }}</button>
+</div>
+{{ form_end(formComment) }}

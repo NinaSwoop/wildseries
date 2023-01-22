@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\Episode;
 use App\Entity\Program;
 use App\Entity\Season;
+use App\Form\CommentType;
+use App\Repository\CommentRepository;
 use App\Repository\ProgramRepository;
 use App\Repository\SeasonRepository;
 use App\Service\ProgramDuration\ProgramDuration;
@@ -101,19 +104,47 @@ class ProgramController extends AbstractController
         ]);
     }
 
-    #[Route('/{programId}/seasons/{seasonId}/episode/{episodeId}', name: 'episode_show', methods: ['GET'])]
+    #[Route('/{programId}/seasons/{seasonId}/episode/{episodeId}', name: 'episode_show')]
     #[Entity('program', options: ['mapping' => ['programId' => 'id']])]
     #[Entity('season', options: ['mapping' => ['seasonId' => 'id']])]
     #[Entity('episode', options: ['mapping' => ['episodeId' => 'id']])]
-    public function showEpisode(Program $program, Season $season, Episode $episode): Response
+    public function showEpisode(Program $program, Season $season, Episode $episode, Request $request, CommentRepository $commentRepository): Response
     {
+        $comment = new Comment();
+
+        $formComment = $this->createForm(CommentType::class, $comment);
+        $formComment->handleRequest($request);
+        $comments = $commentRepository->findAll('DESC');
+
+        if ($formComment->isSubmitted() && $formComment->isValid()) {
+
+            $comment->setUser($this->getUser());
+            $comment->setEpisode($episode);
+            $commentRepository->save($comment, true);
+
+            $this->addFlash('success', 'Votre commentaire est bien pris en compte');
+
+
+            return $this->renderForm('program/episode_show.html.twig', [
+                'program' => $program,
+                'season' => $season,
+                'episode' => $episode,
+                'formComment' => $formComment,
+                'comments' => $comments
+
+            ]);
+
+        }
 
         return $this->render('program/episode_show.html.twig', [
             'program' => $program,
             'season' => $season,
             'episode' => $episode,
+            'formComment' => $formComment,
+            'comments' => $comments
         ]);
     }
+
 
     #[Route('/{slug}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Program $program, ProgramRepository $programRepository, SluggerInterface $slugger): Response

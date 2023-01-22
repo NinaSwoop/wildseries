@@ -28,7 +28,14 @@
             <p>Synopsis :
                 {{ episode.synopsis }}
             </p>
+            <p>Commentaires : </p>
 
+            {% for comment in comments %}
+                <p> {{ comment.comment }}</p>
+                <p> {{ comment.rate }}</p>
+            {% endfor %}
+
+            {% include "program/_formComment.html.twig" %}
         </div>
     </div>
 {% endblock %}
